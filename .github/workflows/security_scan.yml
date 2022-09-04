@@ -24,11 +24,13 @@ jobs:
       - name: Move Changed Files to tmp folder
         run: |
           mkdir ./tmptrivy
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            FILESIZE = $(du -k $file | cut -f1)
-            if [ $FILESIZE -lt 25000 ]
-              echo '$file : $FILESIZE'
+          for file in ${{ steps/changed-files.outputs.all_changed_files }}; do
+            filesize=$(du -k $file | cut -f1)
+            if ["$filesize" -lt 25000]; then
+              echo "$file"
+              echo "$filesize"
               cp $file ./tmptrivy
+            fi
           ls ./tmptrivy
           done
 
