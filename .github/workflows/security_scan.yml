@@ -5,8 +5,10 @@ on:
       - master
   pull_request:
 jobs:
-  build:
-    name: Build
+
+  # Job 1 Compute Changes
+  dif:
+    name: dif
     runs-on: ubuntu-20.04
     outputs:
       all: ${{ steps.changes.outputs.all}}
@@ -28,10 +30,18 @@ jobs:
           echo "::set-output name=all::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)"
           echo "::set-output name=ts::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep .ts$ | xargs)"
 
-      # Changed Files
-      - name: echo changed files
-        needs: changedfiles
-        run: echo ${{needs.changedfiles.outputs.ts}}
+    trivy:
+      name: trivy
+      runs-on: ubuntu-latest
+      # require the first job to have ran
+      needs: dif
+      # only run there are changed files
+      if: ${{needs.changedfiles.outputs.ts}}
+      steps:
+        - name: echo changed files
+          run: echo ${{needs.changedfiles.outputs.ts}}
+
+    # Job 2 Run Changes Through Trivy
 
       # Run Trivy Scan in non-failure mode
       #- name: Run Trivy vulnerability scanner in repo mode
