@@ -1,4 +1,4 @@
-name: CI
+name: security-checks
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             filesize=$(du -k $file | cut -f1)
             if [ $filesize -lt 25000 ]; then
-              echo $FILESIZE
+              echo $filesize
               cp $file ./tmptrivy
             fi
           ls ./tmptrivy
