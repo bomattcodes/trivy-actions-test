@@ -1,9 +1,6 @@
 name: security-checks
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -11,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest  # windows-latest | macos-latest
-    name: Test changed-files
+    name: Trivy Scan Changed Files
     steps:
       - uses: actions/checkout@v3
         with:
@@ -23,22 +20,34 @@ jobs:
 
       - name: Move Changed Files to tmp folder
         run: |
-          mkdir ./tmptrivy
+          mkdir /tmp/trivy
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             filesize=$(wc -c $file | awk '{print $1}')
             if [ $filesize -lt 1000000 ]; then
               echo $filesize
-              cp $file ./tmptrivy
+              cp $file /tmp/trivy
             fi
-          ls ./tmptrivy
+          ls /tmp/trivy
           done
 
-      # Run Trivy Scan in non-failure mode
+      - name: Move Added Files to tmp folder
+        run: |
+          for file in ${{ steps.changed-files.outputs.added_files }}; do
+            filesize=$(wc -c $file | awk '{print $1}')
+            if [ $filesize -lt 1000000 ]; then
+              echo $filesize
+              cp $file /tmp/trivy
+            fi
+          ls /tmp/trivy
+          done
+
+      # Run Trivy Scan
       - name: Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
-          scan-ref: './tmptrivy'
+          scan-ref: '/tmp/trivy'
+          exit-code: '0' # Always return a 0 exit-code
           ignore-unfixed: true
           format: 'sarif'
           output: 'trivy-results.sarif'
