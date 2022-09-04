@@ -24,21 +24,18 @@ jobs:
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             filesize=$(wc -c $file | awk '{print $1}')
             if [ $filesize -lt 1000000 ]; then
-              echo $filesize
               cp $file ./tmptrivy
             fi
-          ls ./tmptrivy
           done
 
       - name: Move Added Files to tmp folder
         run: |
+          ls ./tmptrivy
           for file in ${{ steps.changed-files.outputs.added_files }}; do
             filesize=$(wc -c $file | awk '{print $1}')
             if [ $filesize -lt 1000000 ]; then
-              echo $filesize
               cp $file ./tmptrivy
             fi
-          ls ./tmptrivy
           done
 
       # Run Trivy Scan
