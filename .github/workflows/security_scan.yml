@@ -29,6 +29,7 @@ jobs:
             if [ $filesize -lt 25000 ]; then
               echo $FILESIZE
               cp $file ./tmptrivy
+            fi
           ls ./tmptrivy
           done
 
