@@ -28,15 +28,10 @@ jobs:
             fi
           done
 
-      - name: Move Added Files to tmp folder
+      # TODO: Remove after testing
+      - name: Check Copied Files
         run: |
           ls ./tmptrivy
-          for file in ${{ steps.changed-files.outputs.added_files }}; do
-            filesize=$(wc -c $file | awk '{print $1}')
-            if [ $filesize -lt 1000000 ]; then
-              cp $file ./tmptrivy
-            fi
-          done
 
       # Run Trivy Scan
       - name: Run Trivy vulnerability scanner in repo mode
@@ -55,3 +50,8 @@ jobs:
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
+
+      # Don't think this is needed?
+      - name: Clean-up
+        run: |
+          rm -R ./tmptrivy
