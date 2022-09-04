@@ -25,8 +25,8 @@ jobs:
         run: |
           mkdir ./tmptrivy
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            cp $file ./tmptrivy/$file
-            ls ./tmptrivy
+            cp $file ./tmptrivy
+          ls ./tmptrivy
           done
 
 
