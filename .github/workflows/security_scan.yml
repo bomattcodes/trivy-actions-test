@@ -4,8 +4,9 @@ on:
     branches:
       - master
   pull_request:
-jobs:
 
+
+jobs:
   # Job 1 Compute Changes
   dif:
     name: dif
@@ -15,7 +16,6 @@ jobs:
       ts: ${{ steps.changes.outputs.ts }}
 
     steps:
-
       # Checkout Code
       - name: Checkout code
         uses: actions/checkout@v3

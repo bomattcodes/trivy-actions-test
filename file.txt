@@ -1,2 +1,0 @@
-password = was123!
-sdadasd
