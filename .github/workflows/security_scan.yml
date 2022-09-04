@@ -1,40 +1,33 @@
-name: Trivy Scan (Changes Only)
+name: trivy
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
-
 jobs:
-  # Job 1 Compute Changes
-  dif:
-    name: dif
-    runs-on: ubuntu-20.04
+  changedfiles:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
     outputs:
       all: ${{ steps.changes.outputs.all}}
       ts: ${{ steps.changes.outputs.ts }}
-
     steps:
-      # Checkout Code
-      - name: Checkout code
+        # Make sure we have some code to diff.
+      - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 2 # retrieve the preceding commit.
-
-      # DIF
+          with:
+            fetch-depth: 0
       - name: Get changed files
         id: changes
         # Set outputs using the command.
         run: |
           echo "::set-output name=all::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)"
           echo "::set-output name=ts::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep .ts$ | xargs)"
-
-  scan:
-    name: scan
+  lint:
     runs-on: ubuntu-latest
     # require the first job to have ran
-    needs: dif
+    needs: changedfiles
     # only run there are changed files
     if: ${{needs.changedfiles.outputs.ts}}
     steps:
