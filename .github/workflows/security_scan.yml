@@ -20,26 +20,25 @@ jobs:
 
       - name: Move Changed Files to tmp folder
         run: |
-          mkdir ./tmp/trivy
+          mkdir /tmp/trivy
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             filesize=$(wc -c $file | awk '{print $1}')
             if [ $filesize -lt 1000000 ]; then
               echo $filesize
-              cp $file ./tmp/trivy
+              cp $file /tmp/trivy
             fi
-          ls ./tmp/trivy
+          ls /tmp/trivy
           done
 
       - name: Move Added Files to tmp folder
         run: |
-          mkdir ./tmp/trivy
           for file in ${{ steps.changed-files.outputs.added_files }}; do
             filesize=$(wc -c $file | awk '{print $1}')
             if [ $filesize -lt 1000000 ]; then
               echo $filesize
-              cp $file ./tmp/trivy
+              cp $file /tmp/trivy
             fi
-          ls ./tmp/trivy
+          ls /tmp/trivy
           done
 
       # Run Trivy Scan
@@ -47,7 +46,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
-          scan-ref: './tmp/trivy'
+          scan-ref: '/tmp/trivy'
           exit-code: '0' # Always return a 0 exit-code
           ignore-unfixed: true
           format: 'sarif'
