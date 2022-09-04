@@ -25,9 +25,9 @@ jobs:
         run: |
           mkdir ./tmptrivy
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            FILESIZE = $(stat -c%s "$file")
-            if [ $FILESIZE -lt 25000000 ]
-              echo $FILESIZE
+            FILESIZE = $(du -k $file | cut -f1)
+            if [ $FILESIZE -lt 25000 ]
+              echo '$file : $FILESIZE'
               cp $file ./tmptrivy
           ls ./tmptrivy
           done
