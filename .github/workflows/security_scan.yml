@@ -1,4 +1,4 @@
-name: build
+name: Trivy Scan (Changes Only)
 on:
   push:
     branches:
@@ -8,20 +8,43 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-20.04
+    outputs:
+      all: ${{ steps.changes.outputs.all}}
+      ts: ${{ steps.changes.outputs.ts }}
+
     steps:
+
+      # Checkout Code
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          fetch-depth: 2 # retrieve the preceding commit.
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
+      # DIF
+      - name: Get changed files
+        id: changes
+        # Set outputs using the command.
+        run: |
+          echo "::set-output name=all::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)"
+          echo "::set-output name=ts::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep .ts$ | xargs)"
+
+      # Changed Files
+      - name: echo changed files
+        needs: changedfiles
+        run: echo ${{needs.changedfiles.outputs.ts}}
+
+      # Run Trivy Scan in non-failure mode
+      #- name: Run Trivy vulnerability scanner in repo mode
+      #  uses: aquasecurity/trivy-action@master
+      #  with:
+      #    scan-type: 'fs'
+      #    ignore-unfixed: true
+      #    format: 'sarif'
+      #    output: 'trivy-results.sarif'
+
+      # Upload Findings to GitHub
+      #- name: Upload Trivy scan results to GitHub Security tab
+      #  uses: github/codeql-action/upload-sarif@v2
+      #  if: always()
+      #  with:
+      #    sarif_file: 'trivy-results.sarif'
