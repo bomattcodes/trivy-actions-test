@@ -11,3 +11,8 @@ def pickle_loads():
 def yaml_load():
     data = request.GET.get("data")
     yaml.load(data, Loader=yaml.Loader) # Noncompliant; Avoid using yaml.load with unsafe yaml.Loader
+
+@app.route('/yaml')
+def yaml_load():
+    data = request.GET.get("data")
+    yaml.load(data, Loader=yaml.Loader) # Noncompliant; Avoid using yaml.load with unsafe yaml.Loader
