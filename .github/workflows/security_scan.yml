@@ -1,4 +1,4 @@
-name: CI
+name: security-checks
 
 on:
   push:
@@ -25,9 +25,9 @@ jobs:
         run: |
           mkdir ./tmptrivy
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            filesize=$(du -k $file | cut -f1)
-            if [ $filesize -lt 25000 ]; then
-              echo $FILESIZE
+            filesize=$(wc -c $file | awk '{print $1}')
+            if [ $filesize -lt 1000000 ]; then
+              echo $filesize
               cp $file ./tmptrivy
             fi
           ls ./tmptrivy
