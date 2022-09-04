@@ -8,6 +8,10 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-20.04
+    outputs:
+      all: ${{ steps.changes.outputs.all}}
+      ts: ${{ steps.changes.outputs.ts }}
+
     steps:
 
       # Checkout Code
@@ -23,6 +27,11 @@ jobs:
         run: |
           echo "::set-output name=all::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)"
           echo "::set-output name=ts::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep .ts$ | xargs)"
+
+      # Changed Files
+      - name: echo changed files
+        needs: changedfiles
+        run: echo ${{needs.changedfiles.outputs.ts}}
 
       # Run Trivy Scan in non-failure mode
       #- name: Run Trivy vulnerability scanner in repo mode
