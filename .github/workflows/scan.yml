@@ -1,9 +1,6 @@
 name: trivy-nightly
-on:
-  push:
-    branches:
-      - main
-  pull_request:
+on: 
+  workflow_dispatch: # Can only be run Manually For Now
 jobs:
   build:
     name: Build
@@ -19,4 +16,3 @@ jobs:
           scan-ref: '.'
           security-checks: 'vuln,secret,config'
           severity: 'CRITICAL,HIGH,MEDIUM'
-          output: 'table'
