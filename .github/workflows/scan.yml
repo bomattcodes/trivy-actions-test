@@ -17,5 +17,4 @@ jobs:
         with:
           scan-type: 'fs,'
           security-checks: 'vuln,secret,config'
-          ignore-unfixed: true
           severity: 'CRITICAL,HIGH,MEDIUM'
