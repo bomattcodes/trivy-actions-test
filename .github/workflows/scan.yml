@@ -19,3 +19,4 @@ jobs:
           scan-ref: '.'
           security-checks: 'vuln,secret,config'
           severity: 'CRITICAL,HIGH,MEDIUM'
+          output: 'table'
