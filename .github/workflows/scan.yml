@@ -1,10 +1,10 @@
 name: trivy-nightly
 on: 
-  workflow_dispatch: # Can only be run Manually For Now
+  workflow_dispatch: # Can be run manually
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
