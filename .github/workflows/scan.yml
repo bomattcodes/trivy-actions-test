@@ -18,5 +18,4 @@ jobs:
           scan-type: 'fs,'
           security-checks: 'vuln,secret,config'
           ignore-unfixed: true
-          format: 'table'
           severity: 'CRITICAL,HIGH,MEDIUM'
